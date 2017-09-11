@@ -265,7 +265,9 @@ public class ContactsListFragment extends ListFragment implements
 			long contactId = cursor.getLong(cursor.getColumnIndexOrThrow(Contacts._ID));
 			ViewHolder viewHolder = (ViewHolder) view.getTag();
 			viewHolder.phoneNumberLookupTask = new PhoneNumberLookupTask(view);
-			viewHolder.phoneNumberLookupTask.execute(contactId);
+
+			if (isAdded())
+				viewHolder.phoneNumberLookupTask.execute(contactId);
 		}
 
 		@Override
@@ -303,6 +305,9 @@ public class ContactsListFragment extends ListFragment implements
 		protected Void doInBackground(Long... ids) {
 			String[] projection = new String[] {Phone.DISPLAY_NAME, Phone.TYPE, Phone.NUMBER, Phone.LABEL};
 			long contactId = ids[0];
+
+			if (getActivity() == null)
+				return null;
 
 			final Cursor phoneCursor = getActivity().getContentResolver().query(
 					Phone.CONTENT_URI,
